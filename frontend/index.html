@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | Techcraft Buyer Portal</title>
+  <meta name="description" content="Sign in or create your account to access the Techcraft Buyer Portal and manage your property favourites." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" role="alert" aria-live="polite"></div>
+
+  <main class="auth-page">
+    <div class="auth-card">
+
+      <!-- Brand -->
+      <div class="auth-header">
+        <h1>Log in or create an account</h1>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs" role="tablist">
+        <button class="tab-btn active" id="tab-login"    role="tab" aria-selected="true"  aria-controls="form-login"    onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn"        id="tab-register" role="tab" aria-selected="false" aria-controls="form-register" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- Login Form -->
+      <form class="auth-form active" id="form-login" novalidate autocomplete="on" onsubmit="handleLogin(event)">
+        <div class="form-group" id="fg-login-email">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" name="email" placeholder="buyer@gmail.com" autocomplete="email" required />
+          <span class="field-error" id="err-login-email"></span>
+        </div>
+
+        <div class="form-group" id="fg-login-password">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+          <span class="field-error" id="err-login-password"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="btn-login">
+          <span>Sign In</span>
+        </button>
+
+        <p class="form-footer">
+          Don't have an account?
+          <a href="#" onclick="switchTab('register'); return false;">Create one for free →</a>
+        </p>
+      </form>
+
+      <!-- Register Form -->
+      <form class="auth-form" id="form-register" novalidate autocomplete="on" onsubmit="handleRegister(event)">
+        <div class="form-group" id="fg-reg-name">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" name="name" placeholder="Ankit Belbase" autocomplete="name" required />
+          <span class="field-error" id="err-reg-name"></span>
+        </div>
+
+        <div class="form-group" id="fg-reg-email">
+          <label for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" name="email" placeholder="buyer@gmail.com" autocomplete="email" required />
+          <span class="field-error" id="err-reg-email"></span>
+        </div>
+
+        <div class="form-group" id="fg-reg-password">
+          <label for="reg-password">Password <span style="color:var(--text-muted); font-weight:400;">(min 6 chars)</span></label>
+          <input type="password" id="reg-password" name="password" placeholder="Choose a strong password" autocomplete="new-password" required />
+          <span class="field-error" id="err-reg-password"></span>
+        </div>
+
+        <div class="form-group" id="fg-reg-confirm">
+          <label for="reg-confirm">Confirm Password</label>
+          <input type="password" id="reg-confirm" name="confirm" placeholder="Repeat your password" autocomplete="new-password" required />
+          <span class="field-error" id="err-reg-confirm"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="btn-register">
+          <span>Create Account</span>
+        </button>
+
+        <p class="form-footer">
+          Already have an account?
+          <a href="#" onclick="switchTab('login'); return false;">Sign in →</a>
+        </p>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

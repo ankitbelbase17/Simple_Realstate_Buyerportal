@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Techcraft Buyer Portal</title>
+  <meta name="description" content="Your personal buyer dashboard — browse properties and manage your favourites." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast-container" role="alert" aria-live="polite"></div>
+
+  <div class="dashboard-layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="sidebar-brand">
+        <span class="brand-name">Real Estate</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-name"  id="sidebar-name">Loading…</div>
+        <div class="user-email" id="sidebar-email"></div>
+        <span class="badge badge-buyer" id="sidebar-role">buyer</span>
+      </div>
+
+      <nav class="sidebar-nav" role="navigation">
+        <button class="nav-item active" id="nav-browse" onclick="showSection('browse')" aria-current="page">
+          Browse Properties
+        </button>
+        <button class="nav-item" id="nav-favourites" onclick="showSection('favourites')">
+          My Favourites
+          <span class="nav-count" id="fav-count">0</span>
+        </button>
+        <button class="nav-item" id="nav-profile" onclick="showSection('profile')">
+          My Profile
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-light btn-full btn-sm" id="btn-logout" onclick="handleLogout()">
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <div class="main-content">
+
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-title" id="topbar-title">Browse Properties</div>
+        <div class="topbar-right">
+          <span class="topbar-greeting" id="topbar-greeting"></span>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="page-content">
+
+        <!-- ── Browse Section ── -->
+        <section class="page-section active" id="section-browse" aria-label="Browse properties">
+          <div class="stats-row" id="stats-row">
+            <div class="stat-card">
+              <div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">Total Listings</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <div class="stat-value" id="stat-favs">0</div>
+                <div class="stat-label">My Favourites</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <div class="stat-value" id="stat-types">0</div>
+                <div class="stat-label">Property Types</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header">
+            <h2 class="section-title">All Listings</h2>
+            <div class="filter-bar" id="filter-bar" role="group" aria-label="Filter by type">
+              <button class="filter-btn active" data-filter="all"     onclick="applyFilter(this)">All</button>
+              <button class="filter-btn"        data-filter="Apartment" onclick="applyFilter(this)">Apartments</button>
+              <button class="filter-btn"        data-filter="Villa"   onclick="applyFilter(this)">Villas</button>
+              <button class="filter-btn"        data-filter="House"   onclick="applyFilter(this)">Houses</button>
+              <button class="filter-btn"        data-filter="Studio"  onclick="applyFilter(this)">Studios</button>
+              <button class="filter-btn"        data-filter="Condo"   onclick="applyFilter(this)">Condos</button>
+              <button class="filter-btn"        data-filter="Bungalow" onclick="applyFilter(this)">Bungalows</button>
+            </div>
+          </div>
+
+          <div class="property-grid" id="property-grid">
+            <!-- Skeleton placeholders while loading -->
+            <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-90"></div><div class="skeleton skeleton-line w-70"></div><div class="skeleton skeleton-line w-50"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-90"></div><div class="skeleton skeleton-line w-70"></div><div class="skeleton skeleton-line w-50"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line w-90"></div><div class="skeleton skeleton-line w-70"></div><div class="skeleton skeleton-line w-50"></div></div></div>
+          </div>
+        </section>
+
+        <!-- ── Favourites Section ── -->
+        <section class="page-section" id="section-favourites" aria-label="My favourites">
+          <div class="section-header">
+            <h2 class="section-title">My Favourites</h2>
+            <span id="fav-subtitle" style="font-size:0.875rem; color:var(--text-secondary);"></span>
+          </div>
+          <div class="property-grid" id="favourites-grid">
+            <!-- filled by JS -->
+          </div>
+        </section>
+
+        <!-- ── Profile Section ── -->
+        <section class="page-section" id="section-profile" aria-label="My profile">
+          <div style="max-width:500px;">
+            <h2 class="section-title" style="margin-bottom:24px;">My Profile</h2>
+            <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; display:flex; flex-direction:column; gap:20px;">
+              <div style="display:flex; align-items:center; gap:16px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+                <div class="user-avatar" id="profile-avatar" style="width:64px;height:64px;font-size:1.6rem;border-radius:16px;">?</div>
+                <div>
+                  <div style="font-size:1.2rem; font-weight:700;" id="profile-name">…</div>
+                  <div style="font-size:0.875rem; color:var(--text-secondary);" id="profile-email">…</div>
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div>
+                  <div style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:4px;">Role</div>
+                  <span class="badge badge-buyer" id="profile-role">buyer</span>
+                </div>
+                <div>
+                  <div style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:4px;">Member Since</div>
+                  <div style="font-size:0.9rem; font-weight:500;" id="profile-joined">—</div>
+                </div>
+                <div>
+                  <div style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-secondary); margin-bottom:4px;">Favourites</div>
+                  <div style="font-size:0.9rem; font-weight:700; color:var(--accent);" id="profile-favcount">0 properties</div>
+                </div>
+              </div>
+              <div style="padding-top:16px; border-top:1px solid var(--border);">
+                <button class="btn btn-light btn-sm" onclick="handleLogout()">Sign Out</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
