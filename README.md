@@ -158,3 +158,7 @@ favourites  (id, user_id → users.id, property_id → properties.id, created_at
 ```
 
 The SQLite database file (`portal.db`) is created automatically in the `backend/db/` folder on first run.
+
+Sample UI:
+<img width="1916" height="971" alt="Screenshot 2026-04-10 193518" src="https://github.com/user-attachments/assets/bd790f3f-30f4-45a5-ba45-b230e75cf7b8" />
+
