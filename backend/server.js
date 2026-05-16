@@ -47,7 +47,7 @@ app.use('/api/auth', authRoutes);
 
 // Public health endpoint for CI checks and uptime monitoring
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'Techcraft Buyer Portal API is running - v2 demo change.' });
+  res.json({ status: 'ok', message: 'Techcraft Buyer Portal API is running - v2 demo change again.' });
 });
 
 // Protected API routes
