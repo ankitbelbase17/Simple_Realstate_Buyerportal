@@ -44,11 +44,14 @@ const frontendPath = path.join(__dirname, '..', 'frontend');
 app.use(express.static(frontendPath));
 
 app.use('/api/auth', authRoutes);
-app.use('/api', propertiesRoutes);
 
+// Public health endpoint for CI checks and uptime monitoring
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', message: 'Techcraft Buyer Portal API is running.' });
+  res.json({ status: 'ok', message: 'Techcraft Buyer Portal API is running - v2 demo change.' });
 });
+
+// Protected API routes
+app.use('/api', propertiesRoutes);
 
 app.get('/metrics', async (_req, res) => {
   res.set('Content-Type', register.contentType);
