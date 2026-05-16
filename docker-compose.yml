@@ -1,0 +1,44 @@
+﻿version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: buyer-portal-app
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - JWT_SECRET=free-tier-demo-secret
+    volumes:
+      - app_data:/tmp/techcraft_portal
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: buyer-portal-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: buyer-portal-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  app_data:
+  grafana_data:
