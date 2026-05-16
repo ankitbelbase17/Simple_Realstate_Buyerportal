@@ -1,0 +1,120 @@
+---
+# ============================================================================
+# Ansible Playbook: Deploy Real Estate Buyer Portal
+# ============================================================================
+# This playbook automates the deployment of the containerized Buyer Portal
+# application to a target server (e.g., VirtualBox VM).
+#
+# Usage:
+#   ansible-playbook -i inventory.ini deploy.yml
+# ============================================================================
+
+- name: Deploy Real Estate Buyer Portal
+  hosts: webservers
+  become: yes
+
+  vars:
+    app_dir: /opt/buyer-portal
+    repo_url: "https://github.com/ankitbelbase17/Ko-Banchaa-Crorepati-Millionare-Game.git"
+    branch: main
+
+  tasks:
+    # ── Step 1: Install prerequisites ──────────────────────────────────────
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          - git
+          - python3-pip
+        state: present
+
+    # ── Step 2: Install Docker ─────────────────────────────────────────────
+    - name: Add Docker GPG key
+      shell: |
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.asc
+
+    - name: Add Docker repository
+      shell: |
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Update apt cache after adding Docker repo
+      apt:
+        update_cache: yes
+
+    - name: Install Docker Engine
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add current user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    # ── Step 3: Clone / Update application code ───────────────────────────
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Clone or update the repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ branch }}"
+        force: yes
+      register: git_result
+
+    # ── Step 4: Build and deploy with Docker Compose ──────────────────────
+    - name: Navigate to project and build containers
+      shell: |
+        cd {{ app_dir }}/Simple_Realstate_Buyerportal
+        docker compose down --remove-orphans || true
+        docker compose up -d --build
+      when: git_result.changed or true
+
+    # ── Step 5: Wait for application to be healthy ────────────────────────
+    - name: Wait for application to start
+      uri:
+        url: "http://localhost:5000/api/health"
+        method: GET
+        status_code: 200
+      register: health_check
+      retries: 10
+      delay: 5
+      until: health_check.status == 200
+
+    - name: Display deployment status
+      debug:
+        msg: |
+          ✅ Deployment successful!
+          App:        http://{{ ansible_host }}:5000
+          Prometheus: http://{{ ansible_host }}:9090
+          Grafana:    http://{{ ansible_host }}:3001 (admin/admin)

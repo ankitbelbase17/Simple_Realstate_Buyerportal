@@ -29,3 +29,12 @@ npm-debug.log*
 # Temp files
 .temp/
 tmp/
+
+# Vagrant
+.vagrant/
+
+# Terraform state
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
