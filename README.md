@@ -45,9 +45,4 @@ This demonstrates automated build + verification without paid cloud.
 
 Developer -> GitHub push -> GitHub Actions CI (test + build) -> Docker image validated -> Local/VPS Docker Compose deployment -> Prometheus scrapes `/metrics` -> Grafana visualizes system health.
 
-## Why this project is good for your submission
 
-- Already has authentication and data flow (real web app)
-- Easy to explain CI/CD and observability
-- Fast to run live during viva/presentation
-- Uses only free/open-source tooling
