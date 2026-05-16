@@ -47,6 +47,11 @@ Simple_Realstate_Buyerportal/
 │       │   └── dashboards/          # Dashboard auto-loader config
 │       └── dashboards/
 │           └── buyer-portal.json    # Pre-built monitoring dashboard
+├── scripts/
+│   ├── deploy-local.ps1             # Local CI/CD pipeline (PowerShell)
+│   ├── deploy-local.sh              # Local CI/CD pipeline (Bash)
+│   ├── install-hooks.ps1            # Git hook installer
+│   └── rollback.ps1                 # Rollback to previous deployment
 ├── backend/                         # Express.js API (auth, properties, metrics)
 ├── frontend/                        # HTML/CSS/JS buyer portal UI
 ├── Dockerfile                       # Multi-stage container build
@@ -88,6 +93,55 @@ On every push/PR to `main` or `master`:
 3. **Deploy Stage** — Validates docker-compose config; actual deployment via `docker compose up` or Ansible
 
 ---
+
+## Local CI/CD Pipeline (Automated Deployment)
+
+Automatic local deployment on every `git commit` — no cloud infrastructure needed.
+
+### One-Time Setup
+```powershell
+.\scripts\install-hooks.ps1
+```
+
+This installs a Git `post-commit` hook that triggers the pipeline automatically.
+
+### How It Works
+```
+git commit → post-commit hook fires automatically
+                │
+                ├── Stage 1: CI (Lint & Validate)
+                │   ├── Node.js syntax check
+                │   ├── Dockerfile present
+                │   └── docker-compose.yml valid
+                │
+                ├── Stage 2: CD (Build & Deploy)
+                │   ├── Tag for rollback
+                │   ├── Docker image rebuild
+                │   └── App container restart
+                │
+                └── Stage 3: Verify (Health Check)
+                    ├── /api/health → 200 OK
+                    └── /metrics → 200 OK
+```
+
+Changes are live at `http://localhost:5000` within ~15 seconds.
+
+### Manual Deployment
+```powershell
+.\scripts\deploy-local.ps1            # Full pipeline (CI + CD)
+.\scripts\deploy-local.ps1 -SkipCI    # Skip lint, just build & deploy
+```
+
+### Rollback
+```powershell
+.\scripts\rollback.ps1                # Revert to last working deployment
+```
+
+### Skip Auto-Deploy on a Commit
+```bash
+git commit --no-verify -m "message"
+```
+
 
 ## Monitoring
 
